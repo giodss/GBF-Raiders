@@ -530,6 +530,30 @@
 {
 	"english": "Lvl 100 Oktopode",
 	"japanese": "Lv100 オクトポーデ",
-	"room": "lvl100oktopode",
+	"room": "lv1100oktopode",
 	"image": "/assets/raids/BattleRaid_Oktopode_Nightmare100.png"
+},
+{
+	"english": "Lvl 90 Piasa",
+	"japanese": "Lv90 パイア・ソー",
+	"room": "lvl90piasa",
+	"image": "/assets/raids/BattleRaid_Piasa_Nightmare90.png"
+},
+{
+	"english": "Lvl 95 Piasa",
+	"japanese": "Lv95 パイア・ソー",
+	"room": "lvl95piasa",
+	"image": "/assets/raids/BattleRaid_Piasa_Nightmare95.png"
+},
+{
+	"english": "Lvl 100 Piasa",
+	"japanese": "Lv100 パイア・ソー",
+	"room": "lvl100piasa",
+	"image": "/assets/raids/BattleRaid_Piasa_Nightmare100.png"
+},
+{
+	"english": "Lvl 75 Tyrannus",
+	"japanese": "Lv75 ティラノス",
+	"room": "lvl75tyrannus",
+	"image": "/assets/raids/BattleRaid_Bizarre_Beast_ExtremePlus.png"
 }]
