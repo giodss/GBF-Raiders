@@ -164,7 +164,7 @@ function StartTwitterStream() {
 	}, function ( stream ) {
 		TimedLogger( "Twitter Stream started." );
 		stream.on( 'data', function ( event ) {
-			console.dir(event);
+			console.log(event);
 			if ( IsValidTweet( tweet ) ) {
 			let raidInfo = {
 				id: GetRaidID( tweet ),
