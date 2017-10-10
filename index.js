@@ -1,15 +1,28 @@
 let express = require( 'express' );
 let twitter = require( 'twitter' );
 let st = require( 'st' );
+let fs = require( 'fs' );
 let app = express();
-var helmet = require( 'helmet' );
+let helmet = require( 'helmet' );
 let bodyParser = require( 'body-parser' );
 let compression = require( 'compression' );
 let morgan = require( 'morgan' );
-let server = require( 'http' ).createServer( app );
-let io = require( 'socket.io' ).listen( server );
 let port = process.env.PORT || 80;
-server.listen( port );
+let io = null;
+
+if ( process.env.sslEnabled === "true" ) {
+	const options = {
+		cert: fs.readFileSync( __dirname + '/sslcert/fullchain.pem' ),
+		key: fs.readFileSync( __dirname + '/sslcert/privkey.pem' )
+	};
+	let sslServer = require( 'https' ).createServer( options, app );
+	sslServer.listen( 443 );
+	io = require( 'socket.io' ).listen( sslServer );
+} else {
+	let server = require( 'http' ).createServer( app );
+	server.listen( port );
+	io = require( 'socket.io' ).listen( server );
+}
 
 let client = new twitter( {
 	consumer_key: process.env.consumer_key,
@@ -33,8 +46,10 @@ app.use( bodyParser.urlencoded( {
 	extended: true
 } ) );
 
+app.get( '/health-check', ( req, res ) => res.sendStatus( 200 ) );
+
 app.get( '/getraids', function ( req, res ) {
-	res.header('Cache-Control', 'public, max-age=432000000');
+	res.header( 'Cache-Control', 'public, max-age=432000000' );
 	res.send( raidConfigs );
 } );
 
@@ -43,6 +58,7 @@ app.use( st( {
 	url: '/',
 	index: '/index.html',
 	gzip: true,
+	dot: true,
 	cache: {
 		content: {
 			max: 1024 * 1024 * 64, // how much memory to use on caching contents (bytes * kilo * mega)
@@ -144,4 +160,5 @@ io.sockets.on( 'connection', function ( socket ) {
 } );
 
 TimedLogger( "Starting GBF Raiders on port " + port + "." );
+
 StartTwitterStream();
