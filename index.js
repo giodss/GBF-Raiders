@@ -88,61 +88,137 @@ function searchTextForRaids( text ) {
 	return result;
 }
 
-function StartTwitterStream() {
-	client.stream( 'statuses/filter', {
-		track: keywords
-	}, function ( stream ) {
-		TimedLogger( "Twitter Stream started." );
-		stream.on( 'data', function ( event ) {
-			TimedLogger( "Tweet found." );
-			let room = searchTextForRaids( event.text );
-			var message = "No Twitter Message.";
-			var language = "JP";
-			var raidID = event.text.substr( event.text.indexOf( 'ID' ) + 3, 9 );
-			if ( raidID.charAt( 0 ) == " " ) {
-				raidID = raidID.substr( 1, 8 );
+function DoesTweetContainMessage( data ) {
+	let result = false;
+	if ( data.text.indexOf("参加者募集") != -1 || data.text.indexOf("I need backup") != -1 ) {
+		result = true;
+	}
+	return result;
+}
+
+function GetTweetLanguage( data ) {
+	if ( data.text.indexOf( '参戦ID' ) !== -1 ) {
+		return "JP";
+	} else if ( data.text.indexOf( 'Battle ID' ) !== -1 ) {
+		return "EN";
+	} else {
+		return null;
+	}
+}
+
+function GetTweetMessage( data ) {
+	let result = {
+		language: "JP",
+		message: "No Twitter Message."
+	};
+	let splitString = data.text.split('\n');
+	let tempMessage = splitString[1];
+	if (tempMessage != "I need backup!" && tempMessage != "参加者募集！")
+	{
+		result.message = tempMessage;
+	}
+	if ( GetTweetLanguage( data ) === "JP" ) {
+		result.language = "JP";
+	} else if ( GetTweetLanguage( data ) === "EN" ) {
+		result.language = "EN";
+	}
+	return result;
+}
+
+function GetRaidID( data ) {
+	var result = null;
+	try {
+		result = data.text.substr( 0, 8 );
+	} catch ( error ) {
+		TimedLogger( "Twitter", "Error", error );
+	}
+	return result;
+}
+
+function IsValidTweet( data ) {
+	let result = false;
+	if ( data.source !== '<a href="http://granbluefantasy.jp/" rel="nofollow">グランブルー ファンタジー</a>' ) {
+		TimedLogger( "Twitter", "Invalid Tweet Source", data.source );
+	} else {
+		if ( searchTextForRaids( data.text ) === null ) {
+			TimedLogger( "Twitter", "No Raid Name", data.text );
+		} else {
+			if ( DoesTweetContainMessage( data ) && searchTextForRaids( GetTweetMessage( data ).message ) !== null ) {
+				TimedLogger( "Twitter", "Message Contains Name", data.text );
 			} else {
-				raidID = raidID.substr( 0, 8 );
-			}
-			if ( event.text.substr( 0, 10 ) !== "参加者募集！参戦ID" && event.text.substr( 0, 10 ) !== "I need bac" ) {
-				if ( event.text.indexOf( '参戦ID' ) !== -1 ) {
-					message = event.text.substring( 0, event.text.indexOf( '参戦ID' ) - 7 );
-					language = "JP";
-				} else if ( event.text.indexOf( 'Battle ID' ) !== -1 ) {
-					message = event.text.substring( 0, event.text.indexOf( 'Battle ID' ) - 15 );
-					language = "EN";
+				if ( GetRaidID( data ) === null ) {
+					TimedLogger( "Twitter", "No Raid ID", data.text );
+				} else {
+					TimedLogger( "Twitter", "Valid Tweet", "" );
+					result = true;
 				}
 			}
-			var raidInfo = {
-				id: raidID,
-				user: "@" + event.user.screen_name,
-				time: event.created_at,
-				room: room,
-				message: message,
-				language: language,
+		}
+	}
+	return result;
+}
+
+function StartTwitterStream() {
+	TimedLogger( "System", "Starting Twitter Stream", "" );
+	let client = new twitter( {
+		consumer_key: process.env.consumer_key,
+		consumer_secret: process.env.consumer_secret,
+		token: process.env.access_token_key,
+		token_secret: process.env.access_token_secret
+	} );
+
+	client.on( 'tweet', function ( tweet ) {
+		console.dir(tweet);
+		TimedLogger( "Twitter", "Tweet Found", "" );
+		if ( IsValidTweet( tweet ) ) {
+			let raidInfo = {
+				id: GetRaidID( tweet ),
+				user: "@" + tweet.user.screen_name,
+				time: tweet.created_at,
+				room: searchTextForRaids( tweet.text ),
+				message: "No Twitter Message.",
+				language: "JP",
 				status: "unclicked"
 			};
-			TimedLogger( "Raid Info: " );
-			console.dir( raidInfo );
-			io.to( room ).emit( 'tweet', raidInfo );
-		} );
-
-		stream.on( 'error', function ( error ) {
-			TimedLogger( "Twitter Stream error:" );
-			console.dir( error );
-			StartTwitterStream();
-		} );
-		stream.on( 'disconnect', function ( disconnect ) {
-			TimedLogger( "Twitter Stream disconnect:" );
-			console.dir( disconnect );
-			StartTwitterStream();
-		} );
-		stream.on( 'warning', function ( warning ) {
-			TimedLogger( "Twitter Stream warning:" );
-			console.dir( warning );
-		} );
+			if ( DoesTweetContainMessage( tweet ) ) {
+				let tweetMessage = GetTweetMessage( tweet );
+				raidInfo.message = tweetMessage.message;
+				raidInfo.language = tweetMessage.language;
+			} else if ( GetTweetLanguage( tweet ) !== null ) {
+				raidInfo.language = GetTweetLanguage( tweet );
+			}
+			TimedLogger( "Twitter", "Raid Info", JSON.stringify( raidInfo ) );
+			lastTweet = new Date().getTime();
+			io.to( raidInfo.room ).emit( 'tweet', raidInfo );
+		}
 	} );
+
+	client.on( 'error', function ( error ) {
+		TimedLogger( "Twitter", "Error", JSON.stringify( error ) );
+	} );
+
+	client.on( 'reconnect', function ( reconnect ) {
+		TimedLogger( "Twitter", "Reconnect", JSON.stringify( reconnect ) );
+	} );
+
+	client.track( keywords );
 }
+
+setInterval( function () {
+	if ( new Date().getTime() - 300000 > lastTweet ) {
+		TimedLogger( "Twitter", "No Tweet Warning", "Sending Email..." );
+		try {
+			exec( 'echo "There hasn\'t been a tweet in 5 minutes! You should check up on things." | mail -s "Tweet Warning!" gene@pinskiy.us' );
+			lastTweet = new Date().getTime();
+			setTimeout( function () {
+				TimedLogger( "Twitter", "No Tweet Warning", "Restarting Twitter Client..." );
+				StartTwitterStream();
+			}, 500 );
+		} catch ( error ) {
+			TimedLogger( "Twitter", "No Tweet Error", JSON.stringify( error ) );
+		}
+	}
+}, 60000 )
 
 io.sockets.on( 'connection', function ( socket ) {
 	TimedLogger( "New connection established." );
