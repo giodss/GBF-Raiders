@@ -180,9 +180,11 @@ function StartTwitterStream() {
 				if ( event.text.indexOf( '参戦ID' ) !== -1 ) {
 					message = event.text.substring( 0, event.text.indexOf( '参戦ID' ) - 7 );
 					language = "JP";
+					raidID = event.text.substr( event.text.indexOf( 'ID' ) -14, 9 );
 				} else if ( event.text.indexOf( 'Battle ID' ) !== -1 ) {
 					message = event.text.substring( 0, event.text.indexOf( 'Battle ID' ) - 15 );
 					language = "EN";
+					raidID = event.text.substr( event.text.indexOf( 'ID' ) -19, 9 );
 				}
 			}
 			var raidInfo = {
