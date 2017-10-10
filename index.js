@@ -166,7 +166,6 @@ function StartTwitterStream() {
 		stream.on( 'data', function ( event ) {
 
 			TimedLogger( "Tweet found." );
-			console.log(event.text);
 			let room = searchTextForRaids( event.text );
 			var message = "No Twitter Message.";
 			var language = "JP";
