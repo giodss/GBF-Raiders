@@ -164,59 +164,39 @@ function StartTwitterStream() {
 	}, function ( stream ) {
 		TimedLogger( "Twitter Stream started." );
 		stream.on( 'data', function ( event ) {
-			console.log(event);
-			if ( IsValidTweet( tweet ) ) {
-			let raidInfo = {
-				id: GetRaidID( tweet ),
-				user: "@" + tweet.user.screen_name,
-				time: tweet.created_at,
-				room: searchTextForRaids( tweet.text ),
-				message: "No Twitter Message.",
-				language: "JP",
-				status: "unclicked"
-			};
-			if ( DoesTweetContainMessage( tweet ) ) {
-				let tweetMessage = GetTweetMessage( tweet );
-				raidInfo.message = tweetMessage.message;
-				raidInfo.language = tweetMessage.language;
-			} else if ( GetTweetLanguage( tweet ) !== null ) {
-				raidInfo.language = GetTweetLanguage( tweet );
-			}
-			TimedLogger( "Twitter", "Raid Info", JSON.stringify( raidInfo ) );
-			
-			io.to( raidInfo.room ).emit( 'tweet', raidInfo );
-			}
-// 			TimedLogger( "Tweet found." );
-// 			let room = searchTextForRaids( event.text );
-// 			var message = "No Twitter Message.";
-// 			var language = "JP";
+
+			TimedLogger( "Tweet found." );
+			let room = searchTextForRaids( event.text );
+			var message = "No Twitter Message.";
+			var language = "JP";
+			var raidID = GetRaidID(event)
 // 			var raidID = event.text.substr( event.text.indexOf( 'ID' ) + 3, 9 );
 // 			if ( raidID.charAt( 0 ) == " " ) {
 // 				raidID = raidID.substr( 1, 8 );
 // 			} else {
 // 				raidID = raidID.substr( 0, 8 );
 // 			}
-// 			if ( event.text.substr( 0, 10 ) !== "参加者募集！参戦ID" && event.text.substr( 0, 10 ) !== "I need bac" ) {
-// 				if ( event.text.indexOf( '参戦ID' ) !== -1 ) {
-// 					message = event.text.substring( 0, event.text.indexOf( '参戦ID' ) - 7 );
-// 					language = "JP";
-// 				} else if ( event.text.indexOf( 'Battle ID' ) !== -1 ) {
-// 					message = event.text.substring( 0, event.text.indexOf( 'Battle ID' ) - 15 );
-// 					language = "EN";
-// 				}
-// 			}
-// 			var raidInfo = {
-// 				id: raidID,
-// 				user: "@" + event.user.screen_name,
-// 				time: event.created_at,
-// 				room: room,
-// 				message: message,
-// 				language: language,
-// 				status: "unclicked"
-// 			};
-// 			TimedLogger( "Raid Info: " );
-// 			console.dir( raidInfo );
-// 			io.to( room ).emit( 'tweet', raidInfo );
+			if ( event.text.substr( 0, 10 ) !== "参加者募集！参戦ID" && event.text.substr( 0, 10 ) !== "I need bac" ) {
+				if ( event.text.indexOf( '参戦ID' ) !== -1 ) {
+					message = event.text.substring( 0, event.text.indexOf( '参戦ID' ) - 7 );
+					language = "JP";
+				} else if ( event.text.indexOf( 'Battle ID' ) !== -1 ) {
+					message = event.text.substring( 0, event.text.indexOf( 'Battle ID' ) - 15 );
+					language = "EN";
+				}
+			}
+			var raidInfo = {
+				id: raidID,
+				user: "@" + event.user.screen_name,
+				time: event.created_at,
+				room: room,
+				message: message,
+				language: language,
+				status: "unclicked"
+			};
+			TimedLogger( "Raid Info: " );
+			console.dir( raidInfo );
+			io.to( room ).emit( 'tweet', raidInfo );
 		} );
 
 		stream.on( 'error', function ( error ) {
