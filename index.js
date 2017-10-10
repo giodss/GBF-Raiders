@@ -178,11 +178,11 @@ function StartTwitterStream() {
 // 			}
 			if ( event.text.substr( 0, 10 ) !== "参加者募集！参戦ID" && event.text.substr( 0, 10 ) !== "I need bac" ) {
 				if ( event.text.indexOf( '参戦ID' ) !== -1 ) {
-					message = event.text.substring( 0, event.text.indexOf( ':参戦ID' ) - 9 );
+					message = event.text.substring( 0, event.text.indexOf( ':参戦ID' ) - 8 );
 					language = "JP";
 					raidID = event.text.substr( event.text.indexOf( ':参戦ID' ) -9, 8 );
 				} else if ( event.text.indexOf( 'Battle ID' ) !== -1 ) {
-					message = event.text.substring( 0, event.text.indexOf( ':Battle ID' ) - 9 );
+					message = event.text.substring( 0, event.text.indexOf( ':Battle ID' ) - 8 );
 					language = "EN";
 					raidID = event.text.substr( event.text.indexOf( ':Battle ID' ) -9, 8 );
 				}
