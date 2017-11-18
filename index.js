@@ -125,16 +125,6 @@ function GetTweetMessage( data ) {
 	return result;
 }
 
-function GetRaidID( data ) {
-	var result = null;
-	try {
-		result = data.text.substr( 0, 8 );
-	} catch ( error ) {
-		TimedLogger( "Twitter", "Error", error );
-	}
-	return result;
-}
-
 function IsValidTweet( data ) {
 	let result = false;
 	if ( data.source !== '<a href="http://granbluefantasy.jp/" rel="nofollow">グランブルー ファンタジー</a>' ) {
@@ -158,6 +148,52 @@ function IsValidTweet( data ) {
 	return result;
 }
 
+function DoesTweetContainMessage( data ) {
+	let result = false;
+	if ( data.text.indexOf( "参加者募集" ) != -1 || data.text.indexOf( "I need backup" ) != -1 ) {
+		result = true;
+	}
+	return result;
+}
+
+function GetTweetMessage( data ) {
+	let result = {
+		language: "JP",
+		message: "No Twitter Message."
+	};
+	let splitString = data.text.split( '\n' );
+	let tempMessage = splitString[ 1 ];
+	if ( data.text.indexOf( ":" ) > 9) {
+		result.message = data.text.substr(0, data.text.indexOf( ":" ) - 10);
+	}
+	if ( GetTweetLanguage( data ) === "JP" ) {
+		result.language = "JP";
+	} else if ( GetTweetLanguage( data ) === "EN" ) {
+		result.language = "EN";
+	}
+	return result;
+}
+
+function GetTweetLanguage( data ) {
+	if ( data.text.indexOf( '参戦ID' ) !== -1 ) {
+		return "JP";
+	} else if ( data.text.indexOf( 'Battle ID' ) !== -1 ) {
+		return "EN";
+	} else {
+		return null;
+	}
+}
+
+function GetRaidID( data ) {
+	var result = null;
+	try {
+		result = data.text.substr( data.text.indexOf( ":" ) - 9, 8 );
+	} catch ( error ) {
+		TimedLogger( "Twitter", "Error", error );
+	}
+	return result;
+}
+
 function StartTwitterStream() {
 	client.stream( 'statuses/filter', {
 		track: keywords
@@ -176,17 +212,25 @@ function StartTwitterStream() {
 // 			} else {
 // 				raidID = raidID.substr( 0, 8 );
 // 			}
-			if ( event.text.substr( 0, 10 ) !== "参加者募集！参戦ID" && event.text.substr( 0, 10 ) !== "I need bac" ) {
-				if ( event.text.indexOf( '参戦ID' ) !== -1 ) {
-					message = event.text.substring( 0, event.text.indexOf( ':参戦ID' ) - 8 );
-					language = "JP";
-					raidID = event.text.substr( event.text.indexOf( ':参戦ID' ) -9, 8 );
-				} else if ( event.text.indexOf( 'Battle ID' ) !== -1 ) {
-					message = event.text.substring( 0, event.text.indexOf( ':Battle ID' ) - 8 );
-					language = "EN";
-					raidID = event.text.substr( event.text.indexOf( ':Battle ID' ) -9, 8 );
-				}
+			
+			if ( DoesTweetContainMessage( event ) ) {
+				let tweetMessage = GetTweetMessage( tweet );
+				message = tweetMessage.message;
+				language = tweetMessage.language;
+			} else if ( GetTweetLanguage( event ) !== null ) {
+				language = GetTweetLanguage( event );
 			}
+// 			if ( event.text.substr( 0, 10 ) !== "参加者募集！参戦ID" && event.text.substr( 0, 10 ) !== "I need bac" ) {
+// 				if ( event.text.indexOf( '参戦ID' ) !== -1 ) {
+// 					message = event.text.substring( 0, event.text.indexOf( ':参戦ID' ) - 8 );
+// 					language = "JP";
+// 					raidID = event.text.substr( event.text.indexOf( ':参戦ID' ) -9, 8 );
+// 				} else if ( event.text.indexOf( 'Battle ID' ) !== -1 ) {
+// 					message = event.text.substring( 0, event.text.indexOf( ':Battle ID' ) - 8 );
+// 					language = "EN";
+// 					raidID = event.text.substr( event.text.indexOf( ':Battle ID' ) -9, 8 );
+// 				}
+// 			}
 			var raidInfo = {
 				id: raidID,
 				user: "@" + event.user.screen_name,
