@@ -214,7 +214,7 @@ function StartTwitterStream() {
 // 			}
 			
 			if ( DoesTweetContainMessage( event ) ) {
-				let tweetMessage = GetTweetMessage( tweet );
+				let tweetMessage = GetTweetMessage( event );
 				message = tweetMessage.message;
 				language = tweetMessage.language;
 			} else if ( GetTweetLanguage( event ) !== null ) {
