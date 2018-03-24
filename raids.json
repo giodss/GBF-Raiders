@@ -1150,4 +1150,20 @@
 	"image": "/assets/raids/BattleRaid_Xeno_Corow_Raid.png",
 	"category": "Current Event",
 	"element": "Light"
+},
+{
+	"english": "Lvl 120 Avatar",
+	"japanese": "Lv120 アバター",
+	"room": "lvl120avatar",
+	"image": "/assets/raids/BattleRaid_Avatar_Impossible.png",
+	"category": "Impossible Omega II",
+	"element": "Dark"
+},
+{
+	"english": "Lvl 120 Metatron",
+	"japanese": "Lv120 メタトロン",
+	"room": "lvl120metatron",
+	"image": "/assets/raids/BattleRaid_Metatron_Impossible.png",
+	"category": "Impossible Omega II",
+	"element": "Light"
 }]
