@@ -1170,7 +1170,7 @@
 {
 	"english": "Lvl 75 Wicked Rebel",
 	"japanese": "Lv75 ウィケッドレブル",
-	"room": "lvl75vulcanrio",
+	"room": "lvl75wickedrebel",
 	"image": "/assets/raids/BattleRaid_Wicked_Rebel_ExtremePlus.png",
 	"category": "Unite and Fight",
 	"element": "Dark"
@@ -1178,7 +1178,7 @@
 {
 	"english": "Lvl 90 Typhon",
 	"japanese": "Lv90 テュポーン",
-	"room": "lvl90sethlans",
+	"room": "lvl90typhon",
 	"image": "/assets/raids/BattleRaid_Typhon_Nightmare90.png",
 	"category": "Unite and Fight",
 	"element": "Dark"
@@ -1186,7 +1186,7 @@
 {
 	"english": "Lvl 95 Typhon",
 	"japanese": "Lv95 テュポーン",
-	"room": "lvl95sethlans",
+	"room": "lvl95typhon",
 	"image": "/assets/raids/BattleRaid_Typhon_Nightmare95.png",
 	"category": "Unite and Fight",
 	"element": "Dark"
@@ -1194,7 +1194,7 @@
 {
 	"english": "Lvl 100 Typhon",
 	"japanese": "Lv100 テュポーン",
-	"room": "lvl100sethlans",
+	"room": "lvl100typhon",
 	"image": "/assets/raids/BattleRaid_Typhon_Nightmare100.png",
 	"category": "Unite and Fight",
 	"element": "Dark"
