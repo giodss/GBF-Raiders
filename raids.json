@@ -1166,4 +1166,36 @@
 	"image": "/assets/raids/BattleRaid_Metatron_Impossible.png",
 	"category": "Impossible Omega II",
 	"element": "Light"
+},
+{
+	"english": "Lvl 75 Wicked Rebel",
+	"japanese": "Lv75 ウィケッドレブル",
+	"room": "lvl75vulcanrio",
+	"image": "/assets/raids/BattleRaid_Volcanrio_ExtremePlus.png",
+	"category": "Unite and Fight",
+	"element": "Dark"
+},
+{
+	"english": "Lvl 90 Typhon",
+	"japanese": "Lv90 テュポーン",
+	"room": "lvl90sethlans",
+	"image": "/assets/raids/BattleRaid_Typhon_Nightmare90.png",
+	"category": "Unite and Fight",
+	"element": "Dark"
+},
+{
+	"english": "Lvl 95 Typhon",
+	"japanese": "Lv95 テュポーン",
+	"room": "lvl95sethlans",
+	"image": "/assets/raids/BattleRaid_Typhon_Nightmare95.png",
+	"category": "Unite and Fight",
+	"element": "Dark"
+},
+{
+	"english": "Lvl 100 Typhon",
+	"japanese": "Lv100 テュポーン",
+	"room": "lvl100sethlans",
+	"image": "/assets/raids/BattleRaid_Typhon_Nightmare100.png",
+	"category": "Unite and Fight",
+	"element": "Dark"
 }]
