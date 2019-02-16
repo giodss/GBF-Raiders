@@ -1222,4 +1222,20 @@
 	"image": "/assets/raids/BattleRaid_Snow_White_Nightmare100.png",
 	"category": "Unite and Fight",
 	"element": "Water"
+},
+{
+	"english": "Lvl 95 Tsukuyomi",
+	"japanese": "Lv95 ツクヨミ",
+	"room": "lvl95tsukuyomi",
+	"image": "/assets/raids/BattleRaid_Snow_White_Nightmare95.png",
+	"category": "Unite and Fight",
+	"element": "Dark"
+},
+{
+	"english": "Lvl 100 Tsukuyomi",
+	"japanese": "Lv100 ツクヨミ",
+	"room": "lvl100tsukuyomi",
+	"image": "/assets/raids/BattleRaid_Snow_White_Nightmare100.png",
+	"category": "Unite and Fight",
+	"element": "Dark"
 }]
