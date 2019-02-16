@@ -1224,6 +1224,14 @@
 	"element": "Water"
 },
 {
+	"english": "Lvl 90 Tsukuyomi",
+	"japanese": "Lv90 ツクヨミ",
+	"room": "lvl90tsukuyomi",
+	"image": "/assets/raids/BattleRaid_Snow_White_Nightmare90.png",
+	"category": "Unite and Fight",
+	"element": "Dark"
+},
+{
 	"english": "Lvl 95 Tsukuyomi",
 	"japanese": "Lv95 ツクヨミ",
 	"room": "lvl95tsukuyomi",
